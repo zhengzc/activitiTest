@@ -10,6 +10,7 @@ import org.activiti.engine.FormService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +39,7 @@ public class ActivitiTest {
 	 */
 	@Test
 	public void test() {
-		runtimeService.startProcessInstanceByKey("process1");
+		ProcessInstance ps = runtimeService.startProcessInstanceByKey("process1");
 	}
 	
 	/**
@@ -95,7 +96,7 @@ public class ActivitiTest {
 				.list();
 		
 		Task task = tasks.get(0);
-		
+//		int a = 5/0;
 		//获取流程变量
 		Map<String,Object> variables = task.getProcessVariables();
 		LOG.debug("--------------------->"+variables.toString());

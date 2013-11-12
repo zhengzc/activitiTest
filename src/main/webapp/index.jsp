@@ -1,5 +1,4 @@
-<%@page import="com.travelzen.tops.front.common.utils.WebEnv"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
+<%@page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
 
-	<jsp:forward page="/main"></jsp:forward>
+<jsp:forward page="/main"></jsp:forward>
 
