@@ -7,10 +7,10 @@
 <body>
 	<ul>
 		<#list tasks as task>
-			<li><a href="127.0.0.1:8080/activitiTest/openApprovePage?taskId=${task}" target="iframeBody">任务编号${task}</a></li>
+			<li><a href="openApprovePage?taskId=${task}" target="iframeBody">任务编号${task}</a></li>
 		</#list>
 	</ul>
 	
-	<iframe name="iframeBody" height="700px" width="500px"></iframe>
+	<iframe name="iframeBody" height="700px" width="1000px"></iframe>
 </body>
 </html>

@@ -5,29 +5,10 @@
 <title>审批任务</title>
 </head>
 <body>
-
-	<table>
-		<tr>
-			<td>申请人：</td>
-			<td>${user}</td>
-			<td>出差费用：</td>
-			<td>${fee}</td>
-		</tr>
-		<tr>
-			<td>出差目的：</td>
-			<td>${detail}</td>
-			<td>邮箱：</td>
-			<td>${email}</td>
-		</tr>
-	</table>
-
-	<form action="127.0.0.1:8080/activitiTest/" method="get">
-		<table>
-			<tr>
-				<td>审批意见：</td>
-				<td><textarea name="advice" rows="" cols=""></textarea></td>
-			</tr>
-		</table>
+	<#include "${showRes}"/>
+	<form action="approveOrder" method="get">
+		流程id：<input id="taskId" name="taskId" value="${taskId}" />
+		<#include "${formRes}"/>
 		<input type="submit" value="提交"/>
 	</form>
 </body>

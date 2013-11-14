@@ -7,32 +7,24 @@ import org.springframework.stereotype.Service;
 
 @Service(value="res")
 public class Res {
-	private Map<String, String> res =  new HashMap<String, String>();
+	//表单资源
+	private Map<String, String> formRes =  new HashMap<String, String>();
+	//展示资源
+	private Map<String, String> showRes = new HashMap<>();
+	
 	public Res(){
-		res.put("bussinessTripForm", 
-				"<table>\n" +
-				"  <tr>\n" + 
-				"    <td>申请人：</td>\n" + 
-				"    <td><input type=\"text\" id=\"user\" name=\"user\" /></td>\n" + 
-				"    <td>出差费用：</td>\n" + 
-				"    <td><input type=\"text\" id=\"fee\" name=\"fee\" /></td>\n" + 
-				"  </tr>\n" + 
-				"  <tr>\n" + 
-				"    <td>邮箱：</td>\n" + 
-				"    <td><input type=\"text\" id=\"email\" name=\"email\" /></td>\n" + 
-				"    <td>审批人1：</td>\n" + 
-				"    <td><input type=\"text\" id=\"approver1\" name=\"approver1\" /></td>\n" + 
-				"  </tr>\n" + 
-				"  <tr>\n" + 
-				"    <td>审批人2：</td>\n" + 
-				"    <td><input type=\"text\" id=\"approver2\" name=\"approver2\" /></td>\n" + 
-				"    <td>审批人3：</td>\n" + 
-				"    <td><input type=\"text\" id=\"approver3\" name=\"approver3\" /></td>\n" + 
-				"  </tr>\n" + 
-				"</table>");
+		formRes.put("bussinessTripForm","/page/template/formRes1.html");
+		
+		formRes.put("bussinessTripAdvice","/page/template/formRes2.html");
+		
+		showRes.put("bussinessTripAdvice","/page/template/showRes.html");
 	}
 	
-	public String getRes(String resName){
-		return this.res.get(resName);
+	public String getFormRes(String resName){
+		return this.formRes.get(resName);
+	}
+	
+	public String getShowRes(String resName){
+		return this.showRes.get(resName);
 	}
 }

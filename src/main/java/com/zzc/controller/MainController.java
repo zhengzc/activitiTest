@@ -9,11 +9,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.activiti.engine.FormService;
-import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
-import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
@@ -25,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.zzc.activiti.test.Res;
 
@@ -34,8 +33,9 @@ public class MainController {
 	
 	private final Logger LOG = LoggerFactory.getLogger(MainController.class);
 	
-//	@Resource
-//	private ProcessEngine processEngine;
+	@Resource
+	private FreeMarkerConfig freemarkerConfig;
+	
 	@Resource
 	private RuntimeService runtimeService;
 	@Resource
@@ -69,10 +69,9 @@ public class MainController {
 		//获取表单资源
 		String formKey = formService.getStartFormKey(processDefinition.getId());//表单资源编号
 		
-//		mav.getModel().put("resForm",res.getRes("bussinessTripForm"));
-		mav.getModel().put("resForm",res.getRes(formKey));
+		mav.getModel().put("formRes",res.getFormRes(formKey));
 		mav.getModel().put("processId", processDefinition.getId());
-		mav.getModel().put("actionUrl", "/submitOrder");
+		mav.getModel().put("actionUrl", "submitOrder");
 		
 		mav.setViewName("page/requestPage.html"); 
 		return mav;
@@ -107,7 +106,7 @@ public class MainController {
 		//启动流程
 		ProcessInstance processInstance = runtimeService.startProcessInstanceById(processId,variables);
 		
-		mav.setViewName("page/main.html");
+		mav.setViewName("page/test.html");
 		return mav;
 	}
 	
@@ -146,14 +145,25 @@ public class MainController {
 	public ModelAndView openApprovePage(@RequestParam(value="taskId")String taskId){
 		ModelAndView mav = new ModelAndView();
 		
+		//获取任务
 		Task task = taskService.createTaskQuery()
 					.includeProcessVariables()
 					.taskId(taskId)
 					.singleResult();
 		
-		Map<String,Object> variables = task.getProcessVariables();
+		//获取表单资源
+		String formKey = formService.getTaskFormKey(task.getProcessDefinitionId(), task.getTaskDefinitionKey());
+		String formRes = res.getFormRes(formKey);
+		//获取展示资源
+		String showRes = res.getShowRes(formKey);
 		
+//		freemarkerConfig.getConfiguration().getTemplate(name);
+		
+		Map<String,Object> variables = task.getProcessVariables();
 		mav.getModel().put("variables", variables);
+		mav.getModel().put("taskId", taskId);
+		mav.getModel().put("formRes", formRes);
+		mav.getModel().put("showRes", showRes);
 		mav.setViewName("page/task.html");
 		return mav;
 	}
@@ -162,8 +172,38 @@ public class MainController {
 	 * 审批订单
 	 * @return
 	 */
-	public ModelAndView approveOrder(){
+	@RequestMapping(value="approveOrder",method=RequestMethod.GET)
+	public ModelAndView approveOrder(WebRequest req){
 		ModelAndView mav = new ModelAndView();
+		
+		String taskId = req.getParameter("taskId");
+		String advice = req.getParameter("advice");
+		String isOk = req.getParameter("isOk");
+		
+		//begin 00001 zhengzhichao  添加审批人审批意见，是否审批通过等字段
+		//审批意见
+		List<Map<String,String>> approverAdvices = new ArrayList<>();
+		Map<String,String> approverAdvice = new HashMap<>();
+		approverAdvice.put("advice",advice);
+		approverAdvice.put("isOk", isOk);
+		approverAdvices.add(approverAdvice);
+		//end 00001 zhengzhichao
+		
+		//查询任务
+		Task task = taskService.createTaskQuery()
+					.includeProcessVariables()
+					.taskId(taskId)
+					.singleResult();
+		
+		//获取流程变量并添加审批意见
+		Map<String,Object> variables = task.getProcessVariables();
+		variables.put("approverAdvices", approverAdvices);
+		variables.put("isOk", isOk);
+		
+		//完成任务
+		taskService.complete(taskId, variables);
+		
+		mav.setViewName("page/test.html");
 		return mav;
 	}
 }

@@ -7,7 +7,7 @@
 <body>
 	<form action="${actionUrl}" method="get">
 		流程id：<input id="processId" name="processId" value="${processId}" />
-		${resForm}
+		<#include "${formRes}">
 		<input type="submit" value="提交"/>
 		<input type="reset" value="重置"/>
 	</form>
