@@ -38,10 +38,10 @@
 	
 <!-- 	数据源配置 -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="${postgresql.jdbc.driver}" />        
-		<property name="url" value="${postgresql.jdbc.url}" /> 
-	    <property name="username" value="${postgresql.jdbc.username}" />         
-	    <property name="password" value="${postgresql.jdbc.password}" />         
+		<property name="driverClassName" value="${postgresql.jdbc.driver}"></property>   
+		<property name="url" value="${postgresql.jdbc.url}"></property>
+	    <property name="username" value="${postgresql.jdbc.username}"></property>         
+	    <property name="password" value="${postgresql.jdbc.password}"></property>         
 	    
 	    <property name="initialSize" value="${initialSize}"></property>  
         <property name="maxActive" value="${maxActive}"></property>
