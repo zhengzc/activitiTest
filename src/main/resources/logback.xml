@@ -11,7 +11,7 @@
 		</encoder>
 	</appender>
 	
-	<appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	<!-- <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<File>${LOG_DIR}/tops-journey-northern-america-admin.log</File>
 		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
 			<fileNamePattern>${LOG_DIR}/activitiTest-%i.log</fileNamePattern>
@@ -24,9 +24,9 @@
 		<encoder charset="UTF-8">
 			<Pattern>%d{yyyy-MM-dd|HH:mm:ss} [-%-5level-] [%thread] %logger -> %msg %n%ex</Pattern>
 		</encoder>
-	</appender>
+	</appender> -->
     
-	<root level="DEBUG">
+	<root level="INFO">
 		<appender-ref ref="stdout" />
 <!-- 		<appender-ref ref="file" /> -->
 	</root>

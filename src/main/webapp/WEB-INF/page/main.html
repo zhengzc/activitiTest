@@ -5,24 +5,30 @@
 <title>主页面</title>
 </head>
 <body>
-	<h2>提交订单</h2>
-	<form action="">
+	<h2>启动流程</h2>
+	<form action="openRequestPage">
 		<table>
 			<tr>
-				<td></td>
+				<td>流程标识：</td>
+				<td><input type="text" name="processKey" /> </td>
 			</tr>
 		</table>
+		<input type="submit" value="提交" />
 	</form>
 	
 	<br/>
 	
-	<h2>查询任务列表</h2>
-	<form action="">
+	<h2>获取任务列表</h2>
+	<form action="queryOrder">
+		<form action="">
 		<table>
 			<tr>
-				<td></td>
+				<td>用户标识：</td>
+				<td><input type="text" name="userName" /> </td>
 			</tr>
 		</table>
+		<input type="submit" value="提交" />
+	</form>
 	</form>
 	
 	<br/>

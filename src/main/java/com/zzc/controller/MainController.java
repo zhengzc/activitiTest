@@ -25,6 +25,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
+import com.zzc.activiti.core.ProcessCustomService;
 import com.zzc.activiti.test.Res;
 
 @Controller
@@ -48,6 +49,12 @@ public class MainController {
 	@Resource
 	private Res res;
 	
+	@RequestMapping(value="main",method=RequestMethod.GET)
+	public ModelAndView main(){
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("page/main.html");
+		return mav;
+	}
 	/**
 	 * 打开申请页面
 	 * @param req
@@ -200,8 +207,18 @@ public class MainController {
 		variables.put("approverAdvices", approverAdvices);
 		variables.put("isOk", isOk);
 		
-		//完成任务
-		taskService.complete(taskId, variables);
+		if("yes".equals(isOk)){
+			//完成任务
+			taskService.complete(taskId, variables);
+		}else{
+			try {
+				ProcessCustomService.endProcess(taskId,variables);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		
 		mav.setViewName("page/test.html");
 		return mav;

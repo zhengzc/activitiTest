@@ -5,10 +5,18 @@
 <title>审批任务</title>
 </head>
 <body>
-	<#include "${showRes}"/>
+	<#if processImg??>
+		<img alt="流程展示" src="${processImg}">
+	</#if>
+	
+	<#if showRes??>
+		<#include "${showRes}"/>
+	</#if>
 	<form action="approveOrder" method="get">
 		流程id：<input id="taskId" name="taskId" value="${taskId}" />
-		<#include "${formRes}"/>
+		<#if formRes??>
+			<#include "${formRes}"/>
+		</#if>
 		<input type="submit" value="提交"/>
 	</form>
 </body>
