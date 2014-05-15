@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <message id="refuseMessage" name="refuseMessage"></message>
+  <process id="orderApproveFlow" name="主订单审批流程" isExecutable="true">
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <userTask id="deptApproveTask" name="部门审批" activiti:candidateUsers="${candidateUsers}">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${orderApproveFlowService.createTaskEvent(task)}"></activiti:taskListener>
+      </extensionElements>
+      <multiInstanceLoopCharacteristics isSequential="true" activiti:collection="${candidateUserIds}" activiti:elementVariable="candidateUsers">
+        <loopCardinality>${candidateUserIds.size()}</loopCardinality>
+      </multiInstanceLoopCharacteristics>
+    </userTask>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="initVariables"></sequenceFlow>
+    <boundaryEvent id="boundarymessage1" name="出现审批不通过事件" attachedToRef="deptApproveTask" cancelActivity="true">
+      <messageEventDefinition messageRef="refuseMessage"></messageEventDefinition>
+    </boundaryEvent>
+    <sequenceFlow id="flow3" name="审批不通过，销毁所有任务，流程结束" sourceRef="boundarymessage1" targetRef="processOrderTask"></sequenceFlow>
+    <serviceTask id="processOrderTask" name="处理订单refuse" activiti:expression="#{orderApproveFlowService.processRefuseServiceTask(execution)}"></serviceTask>
+    <serviceTask id="servicetask1" name="处理订单complete" activiti:expression="#{orderApproveFlowService.processCompleteServiceTask(execution)}"></serviceTask>
+    <sequenceFlow id="flow6" sourceRef="deptApproveTask" targetRef="servicetask1"></sequenceFlow>
+    <endEvent id="endevent5" name="End"></endEvent>
+    <sequenceFlow id="flow7" sourceRef="servicetask1" targetRef="endevent5"></sequenceFlow>
+    <serviceTask id="initVariables" name="初始化流程变量" activiti:expression="${orderApproveFlowService.initProcessVariables(execution)}"></serviceTask>
+    <sequenceFlow id="flow8" sourceRef="initVariables" targetRef="servicetask2"></sequenceFlow>
+    <serviceTask id="servicetask2" name="启动主订单审批" activiti:expression="#{orderApproveFlowService.initOrderServiceTask(execution)}"></serviceTask>
+    <sequenceFlow id="flow9" sourceRef="servicetask2" targetRef="deptApproveTask"></sequenceFlow>
+    <endEvent id="errorendevent1" name="ErrorEnd">
+      <errorEventDefinition errorRef="error101"></errorEventDefinition>
+    </endEvent>
+    <sequenceFlow id="flow10" sourceRef="processOrderTask" targetRef="errorendevent1"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_orderApproveFlow">
+    <bpmndi:BPMNPlane bpmnElement="orderApproveFlow" id="BPMNPlane_orderApproveFlow">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="20.0" y="200.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="boundarymessage1" id="BPMNShape_boundarymessage1">
+        <omgdc:Bounds height="30.0" width="30.0" x="425.0" y="234.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="deptApproveTask" id="BPMNShape_deptApproveTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="387.0" y="190.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="processOrderTask" id="BPMNShape_processOrderTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="530.0" y="280.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask1" id="BPMNShape_servicetask1">
+        <omgdc:Bounds height="55.0" width="105.0" x="530.0" y="190.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent5" id="BPMNShape_endevent5">
+        <omgdc:Bounds height="35.0" width="35.0" x="670.0" y="200.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="initVariables" id="BPMNShape_initVariables">
+        <omgdc:Bounds height="55.0" width="105.0" x="102.0" y="190.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask2" id="BPMNShape_servicetask2">
+        <omgdc:Bounds height="55.0" width="105.0" x="246.0" y="190.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="errorendevent1" id="BPMNShape_errorendevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="670.0" y="290.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="55.0" y="217.0"></omgdi:waypoint>
+        <omgdi:waypoint x="102.0" y="217.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="440.0" y="264.0"></omgdi:waypoint>
+        <omgdi:waypoint x="439.0" y="307.0"></omgdi:waypoint>
+        <omgdi:waypoint x="530.0" y="307.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="39.0" width="100.0" x="-113.0" y="-19.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="492.0" y="217.0"></omgdi:waypoint>
+        <omgdi:waypoint x="530.0" y="217.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="635.0" y="217.0"></omgdi:waypoint>
+        <omgdi:waypoint x="670.0" y="217.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="207.0" y="217.0"></omgdi:waypoint>
+        <omgdi:waypoint x="246.0" y="217.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="351.0" y="217.0"></omgdi:waypoint>
+        <omgdi:waypoint x="387.0" y="217.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
+        <omgdi:waypoint x="635.0" y="307.0"></omgdi:waypoint>
+        <omgdi:waypoint x="670.0" y="307.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

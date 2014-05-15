@@ -23,7 +23,7 @@
 <!-- 	<mvc:resources mapping="/resources/javascripts/**" -->
 <!-- 		location="/resources/javascripts/" /> -->
 <!-- 	<mvc:resources mapping="/resources/css/**" location="/resources/css/" /> -->
-<!-- 	<mvc:resources mapping="/resources/images/**" location="/resources/images/" /> -->
+	<mvc:resources mapping="/resources/test/png/**" location="/resources/test/png/" />
 <!-- 	<mvc:resources mapping="/resources/swf/**" location="/resources/swf/" /> -->
 
 	<bean id="freemarkerResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">

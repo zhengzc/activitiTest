@@ -9,7 +9,6 @@ import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.FormService;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
@@ -30,9 +29,8 @@ import com.zzc.common.SpringAppContext;
   
   
 /** 
- * 流程操作核心类<br> 
- * 此核心类主要处理：流程通过、驳回、转办、中止、挂起等核心操作<br> 
- *  
+ * 流程操作核心类,提供有中国特色的功能，一般不建议使用
+ * 此核心类主要处理：流程通过、驳回、转办、中止、挂起等核心操作
  *  
  */  
 public class  ProcessCustomService{  
@@ -351,9 +349,27 @@ public class  ProcessCustomService{
         if (bpmnModel == null) {  
             throw new Exception("流程定义未找到!");  
         }  
-        
-        
+        return bpmnModel;  
+    }  
+    
+    /**
+     * 根据流程实例id获取流程定义id
+     * @param processInstanceId
+     * @return
+     * @throws Exception
+     * @author zhengzhichao
+     */
+    public static BpmnModel findBpmnModelByProcessInstanceId(String processInstanceId) throws Exception {  
+    	
+    	ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+    				.processInstanceId(processInstanceId)
+    				.singleResult();
+        // 取得BPMN MODE
+    	BpmnModel bpmnModel = repositoryService.getBpmnModel(processInstance.getProcessDefinitionId());
   
+        if (bpmnModel == null) {  
+            throw new Exception("流程定义未找到!");  
+        }  
         return bpmnModel;  
     }  
   
@@ -386,7 +402,7 @@ public class  ProcessCustomService{
      * @return 
      * @throws Exception 
      */  
-    private static TaskEntity findTaskById(String taskId) throws Exception {  
+    public static TaskEntity findTaskById(String taskId) throws Exception {  
         TaskEntity task = (TaskEntity) taskService.createTaskQuery().taskId(  
                 taskId).singleResult();  
         if (task == null) {  
@@ -399,11 +415,11 @@ public class  ProcessCustomService{
     /** 
      * 根据流程实例ID和任务key值查询所有同级任务集合 
      *  
-     * @param processInstanceId 
-     * @param key 
+     * @param processInstanceId 流程实例id
+     * @param key 任务定义id
      * @return 
      */  
-    private static List<Task> findTaskListByKey(String processInstanceId, String key) {  
+    public static List<Task> findTaskListByKey(String processInstanceId, String key) {  
         return taskService.createTaskQuery().processInstanceId(  
                 processInstanceId).taskDefinitionKey(key).list();  
     }  
@@ -581,10 +597,54 @@ public class  ProcessCustomService{
         restoreTransition(currActivity, oriPvmTransitionList);  
     }  
     
-    public static InputStream getImageStream(String taskId) throws Exception{
-    	BpmnModel bpmnModel = findBpmnModelByTaskId(taskId);
+    /**
+     * 根据taskId生成图片
+     * @param taskId
+     * @return
+     * @throws Exception
+     */
+    public static InputStream getImageStreamByTaskId(String taskId) throws Exception{
+    	ProcessInstance processInstance =  findProcessInstanceByTaskId(taskId);
+    	/*BpmnModel bpmnModel = findBpmnModelByTaskId(taskId);
     	
-    	InputStream imageStream = ProcessDiagramGenerator.generateDiagram(bpmnModel,"png",runtimeService.getActiveActivityIds(findProcessInstanceByTaskId(taskId).getId()));
+    	*//**
+    	 * 需要高亮的节点id
+    	 *//*
+    	List<String> highLightedActivities = runtimeService.getActiveActivityIds(processInstance.getId());//获取当前激活节点id
+    	
+    	List<HistoricActivityInstance> historicActivityInstances = historyService.createHistoricActivityInstanceQuery()
+    					.processInstanceId(processInstance.getId())
+    					.list();
+    	for(HistoricActivityInstance temp:historicActivityInstances){
+    		highLightedActivities.add(temp.getActivityId());
+    	}
+    	
+    	InputStream imageStream = ProcessDiagramGenerator.generateDiagram(bpmnModel,"png",highLightedActivities);*/
+    	return getImageStreamByProcessInstanceId(processInstance.getId());
+    }
+    
+    /**
+     * 根据processInstanceId生成图片
+     * @param taskId
+     * @return
+     * @throws Exception
+     */
+    public static InputStream getImageStreamByProcessInstanceId(String processInstanceId) throws Exception{
+    	BpmnModel bpmnModel = findBpmnModelByProcessInstanceId(processInstanceId);
+    	
+    	/**
+    	 * 需要高亮的节点id
+    	 */
+    	List<String> highLightedActivities = runtimeService.getActiveActivityIds(processInstanceId);//获取当前激活节点id
+    	
+    	List<HistoricActivityInstance> historicActivityInstances = historyService.createHistoricActivityInstanceQuery()
+    					.processInstanceId(processInstanceId)
+    					.list();
+    	for(HistoricActivityInstance temp:historicActivityInstances){
+    		highLightedActivities.add(temp.getActivityId());
+    	}
+    	
+    	InputStream imageStream = ProcessDiagramGenerator.generateDiagram(bpmnModel,"png",highLightedActivities);
     	return imageStream;
     }
     

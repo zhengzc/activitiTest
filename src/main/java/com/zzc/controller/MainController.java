@@ -1,5 +1,10 @@
 package com.zzc.controller;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,7 +37,7 @@ import com.zzc.activiti.test.Res;
 @RequestMapping(value="/")
 public class MainController {
 	
-	private final Logger LOG = LoggerFactory.getLogger(MainController.class);
+	private final Logger logger = LoggerFactory.getLogger(MainController.class);
 	
 	@Resource
 	private FreeMarkerConfig freemarkerConfig;
@@ -164,6 +169,9 @@ public class MainController {
 		//获取展示资源
 		String showRes = res.getShowRes(formKey);
 		
+		//生成图片资源
+		String imgPath = this.genProcessImg(task.getProcessInstanceId());
+		
 //		freemarkerConfig.getConfiguration().getTemplate(name);
 		
 		Map<String,Object> variables = task.getProcessVariables();
@@ -171,6 +179,7 @@ public class MainController {
 		mav.getModel().put("taskId", taskId);
 		mav.getModel().put("formRes", formRes);
 		mav.getModel().put("showRes", showRes);
+		mav.getModel().put("processImg", imgPath);
 		mav.setViewName("page/task.html");
 		return mav;
 	}
@@ -185,7 +194,7 @@ public class MainController {
 		
 		String taskId = req.getParameter("taskId");
 		String advice = req.getParameter("advice");
-		String isOk = req.getParameter("isOk");
+		String isOk = req.getParameter("isOk") == null ? "yes" : req.getParameter("isOk");
 		
 		//begin 00001 zhengzhichao  添加审批人审批意见，是否审批通过等字段
 		//审批意见
@@ -222,5 +231,47 @@ public class MainController {
 		
 		mav.setViewName("page/test.html");
 		return mav;
+	}
+	
+	/**
+	 * 流程iｄ
+	 * @param processInstanceId
+	 * @return
+	 */
+	private String genProcessImg(String processInstanceId){
+		//生成图片
+		String rootPath = this.getClass().getClassLoader().getResource("/").getPath(); 
+		String imgWebPath = "resources"+File.separator+"test"+File.separator+"png"+File.separator+processInstanceId+".png";
+		String imgPath = rootPath+File.separator+".."+File.separator+".."+File.separator+imgWebPath;
+		File img = new File(imgPath);;
+		
+		BufferedOutputStream bufferedOutputStream = null;
+		InputStream inputStream = null;
+		
+		try {
+			inputStream = ProcessCustomService.getImageStreamByProcessInstanceId(processInstanceId);
+			bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(img));
+			
+			byte[] tempbytes = new byte[1000];
+			int byteRead = 0;
+			while ((byteRead = inputStream.read(tempbytes)) != -1){  
+				bufferedOutputStream.write(tempbytes, 0, byteRead);  
+			}  
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				if(bufferedOutputStream != null){
+					bufferedOutputStream.close();
+				}
+				
+				if(inputStream != null){
+					inputStream.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return imgWebPath;
 	}
 }
