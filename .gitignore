@@ -6,3 +6,4 @@ target/
 classes/
 webapps/
 .war
+.bpmn
