@@ -3,7 +3,7 @@
   <process id="deletePnr" name="定时删除pnr" isExecutable="true">
     <startEvent id="timerstartevent1" name="Timer start">
       <timerEventDefinition>
-        <timeCycle>0 0/20 * * * ?</timeCycle>
+        <timeCycle>0/30 * * * * ?</timeCycle>
       </timerEventDefinition>
     </startEvent>
     <serviceTask id="servicetask1" name="Service Task" activiti:expression="#{test.printMessage()}"></serviceTask>
