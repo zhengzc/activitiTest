@@ -76,11 +76,11 @@
 	    <property name="jobExecutorActivate" value="true" />
 	    
 <!-- 	    邮件配置 -->
-	    <property name="mailServerHost" value="shmail1.travelzen.com"></property>
+	    <property name="mailServerHost" value=""></property>
 	    <property name="mailServerPort" value="25"></property>
 	    <property name="mailServerDefaultFrom" value="activitiTest"></property>
-	    <property name="mailServerUsername" value="Zhichao.zheng"></property>
-	    <property name="mailServerPassword" value="zhengzc123"></property>
+	    <property name="mailServerUsername" value=""></property>
+	    <property name="mailServerPassword" value=""></property>
 	    <!-- 些邮件服务器需要ssl交互。默认为false。 -->
 <!-- 	    <property name="mailServerUseSSL">false</property> -->
 	</bean>
